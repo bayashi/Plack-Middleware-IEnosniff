@@ -1,11 +1,63 @@
 use strict;
-use warnings;
+use Plack::Builder;
+use HTTP::Request::Common;
+use LWP::UserAgent;
+
 use Test::More 0.88;
+use Plack::Test;
 
-use Plack::Middleware::IEnosniff;
+my $res = sub { [ 200, ['Content-Type' => 'text/plain'], ['OK'] ] };
 
-can_ok 'Plack::Middleware::IEnosniff', qw/new/;
+{
+    my $app = builder {
+        enable 'IEnosniff';
+        $res;
+    };
+    my $cli = sub {
+            my $cb = shift;
+            my $res = $cb->(GET '/');
+            is $res->code, 200;
+            is $res->content_type, 'text/plain';
+            is $res->content, 'OK';
+            is $res->header('X-Content-Type-Options'), 'nosniff';
+    };
+    test_psgi $app, $cli;
+}
 
-# write more tests
+{
+    my $app = builder {
+        enable 'IEnosniff', only_ie => 1;
+        $res;
+    };
+    my $cli = sub {
+            my $cb = shift;
+            my $req = HTTP::Request->new(GET => '/');
+            $req->header(
+                'User-Agent' => 'Mozilla/4.0', # not include 'MSIE 8'
+            );
+            my $res = $cb->($req);
+            is $res->code, 200;
+            is $res->header('X-Content-Type-Options'), undef;
+    };
+    test_psgi $app, $cli;
+}
+
+{
+    my $app = builder {
+        enable 'IEnosniff', only_ie => 1;
+        $res;
+    };
+    my $cli = sub {
+            my $cb = shift;
+            my $req = HTTP::Request->new(GET => '/');
+            $req->header(
+                'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1)'
+            );
+            my $res = $cb->($req);
+            is $res->code, 200;
+            is $res->header('X-Content-Type-Options'), 'nosniff';
+    };
+    test_psgi $app, $cli;
+}
 
 done_testing;

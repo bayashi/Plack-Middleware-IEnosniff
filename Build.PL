@@ -12,6 +12,7 @@ my $builder = Module::Build->new(
     },
     requires => {
         'Carp' => 0,
+        'Plack::Middleware' => 0,
     },
     add_to_cleanup      => [ 'Plack-Middleware-IEnosniff-*' ],
     meta_merge     => {
