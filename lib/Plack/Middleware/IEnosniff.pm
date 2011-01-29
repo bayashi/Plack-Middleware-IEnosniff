@@ -36,7 +36,7 @@ Plack::Middleware::IEnosniff - added HTTP Header 'X-Content-Type-Options: nosnif
 
     enable 'IEnosniff';
 
-set only_ie option, if you want to send 'X-Content-Type-Options: nosniff' to IE8 only.
+you can set 'only_ie' option, if you want to send 'X-Content-Type-Options: nosniff' for IE8 only.
 
     enable 'IEnosniff', only_ie => 1;
 
