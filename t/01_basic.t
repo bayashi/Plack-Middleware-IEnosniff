@@ -42,6 +42,25 @@ my $res = sub { [ 200, ['Content-Type' => 'text/plain'], ['OK'] ] };
     test_psgi $app, $cli;
 }
 
+
+{
+    my $app = builder {
+        enable 'IEnosniff', only_ie => 1;
+        $res;
+    };
+    my $cli = sub {
+            my $cb = shift;
+            my $req = HTTP::Request->new(GET => '/');
+            $req->header(
+                'User-Agent' => '',
+            );
+            my $res = $cb->($req);
+            is $res->code, 200;
+            is $res->header('X-Content-Type-Options'), undef;
+    };
+    test_psgi $app, $cli;
+}
+
 {
     my $app = builder {
         enable 'IEnosniff', only_ie => 1;
