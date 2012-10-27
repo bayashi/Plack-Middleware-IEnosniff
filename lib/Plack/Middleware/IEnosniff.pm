@@ -5,7 +5,7 @@ use parent 'Plack::Middleware';
 use Plack::Util;
 use Plack::Util::Accessor qw/only_ie/;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub call {
     my ($self, $env) = @_;
@@ -44,6 +44,15 @@ you can set 'only_ie' option, if you want to send 'X-Content-Type-Options: nosni
 =head1 DESCRIPTION
 
 Plack::Middleware::IEnosniff is middleware for Plack. This middleware adds HTTP Header 'X-Content-Type-Options: nosniff' for safe. Sending X-Content-Type-Options response header with the value nosniff will prevent Internet Explorer from MIME-sniffing a response away from the declared content-type.
+
+
+=head1 METHOD
+
+=over
+
+=item call
+
+=back
 
 
 =head1 REPOSITORY

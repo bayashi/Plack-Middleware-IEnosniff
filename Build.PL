@@ -15,6 +15,7 @@ my $builder = Module::Build->new(
         'LWP::UserAgent' => 0,
     },
     requires => {
+        'perl' => '5.8.1',
         'Carp' => 0,
         'Plack::Middleware' => 0,
         'Plack::Util' => 0,
